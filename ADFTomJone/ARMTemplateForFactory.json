@@ -3659,7 +3659,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' BrandId VARCHAR(100) =','''', item(),'''',',',\n' AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Earnings By Site''\nAND Brand = BrandId\n')",
+												"value": "@concat('DECLARE @DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' @ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' @RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' @BrandId VARCHAR(100) =','''', variables('Brand'),'''',',',\n' @AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' @AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''@DateParam'', @DateStr), ''@AccountName'', @AccountName), ''@AccountKey'', @AccountKey), ''@ContainerParam'', @ContainerParam) + '' '' + @RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Earnings By Site''\nAND Brand = @BrandId\n')",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -3687,7 +3687,7 @@
 									"typeProperties": {
 										"variableName": "CurrentFile",
 										"value": {
-											"value": "@concat('incomeaccess_playeraccounts_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
+											"value": "@concat('incomeaccess_playeraccounts_',variables('Brand'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 											"type": "Expression"
 										}
 									}
@@ -4006,7 +4006,12 @@
 										{
 											"referenceName": "src_importPlayerAccount",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"Brand": {
+													"value": "@variables('Brand')",
+													"type": "Expression"
+												}
+											}
 										}
 									],
 									"outputs": [
@@ -4221,7 +4226,12 @@
 										{
 											"referenceName": "src_ImportSiteEarning",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"Brand": {
+													"value": "@variables('Brand')",
+													"type": "Expression"
+												}
+											}
 										}
 									],
 									"outputs": [
@@ -4247,7 +4257,7 @@
 									"typeProperties": {
 										"variableName": "SiteEarningCsvFileName",
 										"value": {
-											"value": "@concat('incomeaccess_earnings_bysite_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
+											"value": "@concat('incomeaccess_earnings_bysite_',variables('Brand'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 											"type": "Expression"
 										}
 									}
@@ -10466,13 +10476,18 @@
 					"referenceName": "LS_AzureBlobStorage",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"Brand": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": {
-							"value": "@concat('incomeaccess_earnings_bysite_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
+							"value": "@concat('incomeaccess_earnings_bysite_',dataset().Brand,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 							"type": "Expression"
 						},
 						"folderPath": "earnings_bysite",
@@ -11702,13 +11717,18 @@
 					"referenceName": "LS_AzureBlobStorage",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"Brand": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": {
-							"value": "@concat('incomeaccess_playeraccounts_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)\n",
+							"value": "@concat('incomeaccess_playeraccounts_',dataset().Brand,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 							"type": "Expression"
 						},
 						"container": "incomeaccess"

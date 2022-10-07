@@ -5,13 +5,18 @@
 			"referenceName": "LS_AzureBlobStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Brand": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": {
-					"value": "@concat('incomeaccess_playeraccounts_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)\n",
+					"value": "@concat('incomeaccess_playeraccounts_',dataset().Brand,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 					"type": "Expression"
 				},
 				"container": "incomeaccess"

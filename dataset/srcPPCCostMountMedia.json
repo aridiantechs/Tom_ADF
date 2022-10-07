@@ -1,0 +1,60 @@
+{
+	"name": "srcPPCCostMountMedia",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat('mountmedia_dailykeywords_',formatDateTime(addDays(utcnow(),-1),'yyyyMMdd'),'.csv')",
+					"type": "Expression"
+				},
+				"container": "mountmedia"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Date",
+				"type": "String"
+			},
+			{
+				"name": "Keyword",
+				"type": "String"
+			},
+			{
+				"name": "Keyword labels",
+				"type": "String"
+			},
+			{
+				"name": "Match type",
+				"type": "String"
+			},
+			{
+				"name": "Device",
+				"type": "String"
+			},
+			{
+				"name": "Network (with search partners)",
+				"type": "String"
+			},
+			{
+				"name": "Account",
+				"type": "String"
+			},
+			{
+				"name": "Cost",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

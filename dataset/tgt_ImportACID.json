@@ -1,0 +1,38 @@
+{
+	"name": "tgt_ImportACID",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ActivityDate",
+				"type": "varchar"
+			},
+			{
+				"name": "ACID",
+				"type": "varchar"
+			},
+			{
+				"name": "AffiliateID",
+				"type": "varchar"
+			},
+			{
+				"name": "SiteID",
+				"type": "varchar"
+			},
+			{
+				"name": "Merchant",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "ACIDReport"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,130 @@
+{
+	"name": "tgt_PlayerAccount",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Date",
+				"type": "varchar"
+			},
+			{
+				"name": "RowId",
+				"type": "varchar"
+			},
+			{
+				"name": "CurrencySymbol",
+				"type": "varchar"
+			},
+			{
+				"name": "TotalRecords",
+				"type": "varchar"
+			},
+			{
+				"name": "MerchantId",
+				"type": "varchar"
+			},
+			{
+				"name": "MerchantName",
+				"type": "varchar"
+			},
+			{
+				"name": "UserName",
+				"type": "varchar"
+			},
+			{
+				"name": "SiteId",
+				"type": "varchar"
+			},
+			{
+				"name": "BannerId",
+				"type": "varchar"
+			},
+			{
+				"name": "CreativeName",
+				"type": "varchar"
+			},
+			{
+				"name": "BannerType",
+				"type": "varchar"
+			},
+			{
+				"name": "PlayerId",
+				"type": "varchar"
+			},
+			{
+				"name": "RegistrationDate",
+				"type": "varchar"
+			},
+			{
+				"name": "FirstDeposit",
+				"type": "varchar"
+			},
+			{
+				"name": "Prod2Commission",
+				"type": "varchar"
+			},
+			{
+				"name": "RevShareCommission",
+				"type": "varchar"
+			},
+			{
+				"name": "TotalCpaCommission",
+				"type": "varchar"
+			},
+			{
+				"name": "CpaCommissionCount",
+				"type": "varchar"
+			},
+			{
+				"name": "TotalCommission",
+				"type": "varchar"
+			},
+			{
+				"name": "New",
+				"type": "varchar"
+			},
+			{
+				"name": "NetRevenue",
+				"type": "varchar"
+			},
+			{
+				"name": "LastClickReferralURL",
+				"type": "varchar"
+			},
+			{
+				"name": "LastClickIP",
+				"type": "varchar"
+			},
+			{
+				"name": "LastClickCountry",
+				"type": "varchar"
+			},
+			{
+				"name": "Deposits",
+				"type": "decimal",
+				"precision": 12,
+				"scale": 2
+			},
+			{
+				"name": "PLayerSK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PlatformId",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "PlayerAccount"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

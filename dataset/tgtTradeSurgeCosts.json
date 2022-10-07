@@ -1,0 +1,17 @@
+{
+	"name": "tgtTradeSurgeCosts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "import",
+			"table": "AggregatorSiteCost"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

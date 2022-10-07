@@ -1,0 +1,17 @@
+{
+	"name": "tgtWhiteZipppccosts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "import",
+			"table": "wz_ppccosts"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

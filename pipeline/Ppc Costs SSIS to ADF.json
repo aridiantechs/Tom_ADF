@@ -1,0 +1,1702 @@
+{
+	"name": "Ppc Costs SSIS to ADF",
+	"properties": {
+		"activities": [
+			{
+				"name": "PPC Keywords",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:02:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "srcPPCKeyword",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgtPPCKeywords",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "PPC Costs",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:02:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "srcPPCCost",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgtPPCCost",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "PPC Cost MountMedia",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:02:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "srcPPCCostMountMedia",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgtPPCCostMountMedia",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Ppc Player MountMedia",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:02:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "PpcChannel",
+								"value": "Adwords"
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "No Records",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "No Records",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Match Type",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Match Type",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Device",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Device",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Keyword",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Keyword",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Account",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Account",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "End Date ",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "End Date ",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Start Date",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Start Date",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SrcPpcPlayerMountMedia",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "TgtPpcPlayerMountMedia",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Log CSV import end",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "PPC Keywords",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "PPC Costs",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "PPC Cost MountMedia",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "TradeSureCosts",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "TradeSurge Player",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "Ppc Player MountMedia",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "WhiteZippcplayers",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "WhiteZipppccosts",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[LogProcessEnd]",
+					"storedProcedureParameters": {
+						"ProcessId": {
+							"value": {
+								"value": "@variables('ProcessId')",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Log Csv Fail",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Error message",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Wait1",
+						"dependencyConditions": [
+							"Skipped"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[LogProcessError]",
+					"storedProcedureParameters": {
+						"Param1": {
+							"value": "See Azure data factory Log",
+							"type": "String"
+						},
+						"ProcessId": {
+							"value": {
+								"value": "@variables('ProcessId')",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "TradeSureCosts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:02:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "srcTradeSurge",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgtTradeSurgeCosts",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "TradeSurge Player",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:02:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "srcTradeSurgePlayer",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgtTradeSurgePlayer",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Slack notification",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get Error Icon",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Error Summary",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://hooks.slack.com/services/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",
+					"method": "POST",
+					"headers": {
+						"Content-type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\n    \"text\": \" ', variables('Summary'),variables('Icon'), '\"\n}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Truncate table script",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Set ProcessId",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE import.PpcKeyword;\nTRUNCATE TABLE import.PpcCost;\nTRUNCATE TABLE import.PpcCost_MountMedia;\nTRUNCATE TABLE import.AggregatorSiteCost;\nTRUNCATE TABLE import.AggregatorSitePlayer;"
+						}
+					]
+				}
+			},
+			{
+				"name": "PPC keyword",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "PPC Cost",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_PpcKeyword]",
+					"storedProcedureParameters": {
+						"jobId": {
+							"value": {
+								"value": "@pipeline().parameters.JobId",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "PPC Cost",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Allocate PPC Cost",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_PpcCost]",
+					"storedProcedureParameters": {
+						"jobId": {
+							"value": {
+								"value": "@pipeline().parameters.JobId",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Allocate PPC Cost",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Log CSV import end",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Slack notification",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_AllocatePpcCosts]",
+					"storedProcedureParameters": {
+						"jobId": {
+							"value": {
+								"value": "@pipeline().parameters.JobId",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Get Log Messages",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "PPC keyword",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_GetLogStatus]",
+					"storedProcedureParameters": {
+						"JobId": {
+							"value": {
+								"value": "@pipeline().parameters.JobId",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"LogType": {
+							"value": "Job",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Slack notifications",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get Log Messages",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://hooks.slack.com/services/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",
+					"method": "POST",
+					"headers": {
+						"Content-type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\n    \"text\": \"', variables('Summary'),variables('Icon'), '\"\n}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Match Type Derived Column",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Ppc Player MountMedia",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "update import.PpcCost_MountMedia\nset [Match Type]= left([Match Type],1);\n"
+						}
+					]
+				}
+			},
+			{
+				"name": "Log Csv Import",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "List Of Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcess]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "tom@mail.com"
+							},
+							"ProcessName": {
+								"type": "String",
+								"value": "Import CSVs"
+							},
+							"ProcessParams": {
+								"type": "String",
+								"value": null
+							},
+							"ProcessStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ProcessType": {
+								"type": "String",
+								"value": "SSIS Dataflow"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQL_Scripts_dataset",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set ProcessId",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log Csv Import",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ProcessId",
+					"value": {
+						"value": "@{activity('Log Csv Import').output.value[0].ProcessId}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Lookup File MetaData",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set Job Id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT   [FileId]\n      ,[FileToDownload]\n      ,ISNULL([Path],'') as Path\n      ,[FileColumnHeaders]\n      ,[BlobContainer]\n      ,[Mandatory]\nFROM [dbo].[SSIS_Metadata]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "FilesMetaData",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "List Of Files",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup File MetaData",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup File MetaData').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Get File Metadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "srcCSVFile",
+									"type": "DatasetReference",
+									"parameters": {
+										"BlobContainer": {
+											"value": "@item().BlobContainer",
+											"type": "Expression"
+										},
+										"Path": {
+											"value": "@item().Path",
+											"type": "Expression"
+										},
+										"File": {
+											"value": "@concat(item().FileToDownload,'_',replace(variables('FileDate'),'-',''),'.csv')",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"exists"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "Check If Exists",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Get File Metadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('Get File Metadata').output.exists",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Log Missing File",
+										"type": "Script",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "LS_AzureSQLDB",
+											"type": "LinkedServiceReference"
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"type": "Query",
+													"text": {
+														"value": "@concat('INSERT INTO log.MissingFile (JobId, MissingFilename,MissingTimestamp,IsMandatory)\nVALUES (',pipeline().parameters.JobId,',''',item().BlobContainer,'/',item().Path,'/',item().FileToDownload,formatDateTime(adddays(utcnow(),-1),'_yyyyMMdd'),'.csv'',''',formatDateTime(utcnow(),'yyyy-MM-dd hh:mm:ss'),''',''',item().Mandatory,''')')",
+														"type": "Expression"
+													}
+												}
+											]
+										}
+									},
+									{
+										"name": "Get Log Message",
+										"type": "Lookup",
+										"dependsOn": [
+											{
+												"activity": "Log Missing File",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderStoredProcedureName": "[dbo].[sp_GetLogStatus]",
+												"storedProcedureParameters": {
+													"JobId": {
+														"type": "Int32",
+														"value": {
+															"value": "@pipeline().parameters.JobId",
+															"type": "Expression"
+														}
+													},
+													"LogType": {
+														"type": "String",
+														"value": "Missing File"
+													}
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"dataset": {
+												"referenceName": "sp_GetLogStatus",
+												"type": "DatasetReference"
+											},
+											"firstRowOnly": false
+										}
+									},
+									{
+										"name": "Push slack Notification",
+										"type": "WebActivity",
+										"dependsOn": [
+											{
+												"activity": "Get Summary",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											},
+											{
+												"activity": "Get Icon",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"url": "https://hooks.slack.com/services/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",
+											"method": "POST",
+											"headers": {
+												"Content-type": "text/plain"
+											},
+											"body": {
+												"value": "@concat('{\n    \"text\": \"', variables('Summary'),variables('Icon'), '\"\n}')",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Get Summary",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Get Log Message",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "Summary",
+											"value": {
+												"value": "@activity('Get Log Message').output.value[0].Summary",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Get Icon",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Get Log Message",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "Icon",
+											"value": {
+												"value": "@activity('Get Log Message').output.value[0].Icon",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Error message",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "PPC Keywords",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "PPC Costs",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "PPC Cost MountMedia",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "TradeSureCosts",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "TradeSurge Player",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "Ppc Player MountMedia",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "WhiteZipppccosts",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "WhiteZippcplayers",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ErrorMsg",
+					"value": {
+						"value": "@concat(activity('PPC Keywords').error?.message,'^|',activity('PPC Costs')?.error?.message,'^|',activity('PPC Cost MountMedia')?.error?.message,'^|',activity('TradeSureCosts')?.error?.message,'^|',activity('TradeSurge Player')?.error?.message,'^|',activity('Ppc Player MountMedia')?.error?.message)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [
+					{
+						"activity": "PPC Keywords",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "PPC Costs",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "PPC Cost MountMedia",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "TradeSureCosts",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "TradeSurge Player",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Ppc Player MountMedia",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "WhiteZipppccosts",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "WhiteZippcplayers",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			},
+			{
+				"name": "Get Error Summary",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Log Mesage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Summary",
+					"value": {
+						"value": "@variables('ErrorMsg')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get Error Icon",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Log Mesage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Icon",
+					"value": {
+						"value": "@activity('Get Log Mesage').output.value[0].Icon",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "WhiteZipppccosts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "srcWhiteZipppccosts",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgtWhiteZipppccosts",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "WhiteZippcplayers",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate table script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_WhiteZipppcplayer",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_WhiteZippcPlayer",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Get Log Mesage",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Log Csv Fail",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_GetLogStatus]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"LogType": {
+								"type": "String",
+								"value": "Job"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SrcspGetLogError",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set date",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SetDate",
+					"value": {
+						"value": "@formatDateTime(concat(formatDateTime(utcnow(),'MM/dd/yyyy'),' 12:00:00'), 'MM/dd/yyyy HH:mm:ss')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Log Start",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set File Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogJob]",
+						"storedProcedureParameters": {
+							"JobName": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PackageDescr')",
+									"type": "Expression"
+								}
+							},
+							"JobParams": {
+								"type": "String",
+								"value": {
+									"value": "@concat('Load Date = ',formatDateTime(variables('Setdate'),'dd/MM/yyyy'))",
+									"type": "Expression"
+								}
+							},
+							"JobStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "tomjones@mail.com"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SpLogJobId",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set Job Id",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JobId",
+					"value": {
+						"value": "@{activity('Log Start').output.firstRow.JobId}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set File Date",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "FileDate",
+					"value": {
+						"value": "@formatDateTime(utcnow(),'yyyy-MM-dd')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"JobId": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"Summary": {
+				"type": "String"
+			},
+			"Icon": {
+				"type": "String"
+			},
+			"ProcessId": {
+				"type": "String",
+				"defaultValue": "0"
+			},
+			"ErrorMsg": {
+				"type": "String"
+			},
+			"ErrorMsgAry": {
+				"type": "Array"
+			},
+			"SetDate": {
+				"type": "String"
+			},
+			"PackageDescr": {
+				"type": "String"
+			},
+			"JobId": {
+				"type": "String"
+			},
+			"FileDate": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-27T11:58:35Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,84 @@
+{
+	"name": "tgt_ImportSiteEarning",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RowId",
+				"type": "varchar"
+			},
+			{
+				"name": "CurrencySymbol",
+				"type": "varchar"
+			},
+			{
+				"name": "TotalRecords",
+				"type": "varchar"
+			},
+			{
+				"name": "MerchantId",
+				"type": "varchar"
+			},
+			{
+				"name": "MerchantName",
+				"type": "varchar"
+			},
+			{
+				"name": "SiteId",
+				"type": "varchar"
+			},
+			{
+				"name": "SiteName",
+				"type": "varchar"
+			},
+			{
+				"name": "MemberId",
+				"type": "varchar"
+			},
+			{
+				"name": "UserName",
+				"type": "varchar"
+			},
+			{
+				"name": "Country",
+				"type": "varchar"
+			},
+			{
+				"name": "Impressions",
+				"type": "varchar"
+			},
+			{
+				"name": "Clicks",
+				"type": "varchar"
+			},
+			{
+				"name": "ClickThroughRatio",
+				"type": "varchar"
+			},
+			{
+				"name": "Downloads",
+				"type": "varchar"
+			},
+			{
+				"name": "DownloadRatio",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "SiteEarning"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

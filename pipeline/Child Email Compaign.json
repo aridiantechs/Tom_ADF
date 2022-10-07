@@ -1,0 +1,2557 @@
+{
+	"name": "Child Email Compaign",
+	"properties": {
+		"activities": [
+			{
+				"name": "List file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ListID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Description",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Description",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "DateCreated",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DateCreated",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Active",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ListType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_ListFileLoad",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_ListFileLoad",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "List_xm file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ListID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Description",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Description",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "DateCreated",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DateCreated",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "Status",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Active",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ListType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_List_xm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_ListFileLoad",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Remove Email list table Duplicates",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "List file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "List_xm file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "With CTE AS\n(\n\tSELECT \n\t\t[ClientID],\n\t\t[ListID],\n\t\t[Name],\n\t\t[Description],\n\t\t[DateCreated],\n\t\t[Active],\n\t\t[ListType],\n\t\tROW_NUMBER() OVER(\n\t\t\t\t\t\t\tPARTITION BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[Name],\n\t\t\t\t\t\t\t\t\t[Description],\n\t\t\t\t\t\t\t\t\t[DateCreated],\n\t\t\t\t\t\t\t\t\t[Active],\n\t\t\t\t\t\t\t\t\t[ListType]\n\t\t\t\t\t\t\tORDER BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[Name],\n\t\t\t\t\t\t\t\t\t[Description],\n\t\t\t\t\t\t\t\t\t[DateCreated],\n\t\t\t\t\t\t\t\t\t[Active],\n\t\t\t\t\t\t\t\t\t[ListType]\n\t\t\t\t\t\t) ROW_NUM\n\n\tFROM [Import].[EmailList]\n)\nDELETE FROM CTE\nWHERE ROW_NUM >1"
+						}
+					]
+				}
+			},
+			{
+				"name": "Attributes file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_attributes",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_attributes",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Attributes_xm file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_attributes_xm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_attributes",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Remove Atrributes table duplicates",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Attributes file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Attributes_xm file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "\nWith CTE AS\n(\n\tSELECT \n\t\t[ClientID],\n\t\t[SubscriberKey],\n\t\t[EmailAddress],\n\t\t[SubscriberID],\n\n\t\tROW_NUMBER() OVER(\n\t\t\t\t\t\t\tPARTITION BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID]\n\t\t\t\t\t\t\tORDER BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID]\n\t\t\t\t\t\t) ROW_NUM\n\n\tFROM [Import].[EmailAttributes]\n)\nDELETE FROM CTE\nWHERE ROW_NUM >1"
+						}
+					]
+				}
+			},
+			{
+				"name": "SendJobs file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SendID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "FromName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FromName",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "FromEmail",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FromEmail",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SchedTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SchedTime",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "SentTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SentTime",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "Subject",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Subject",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Emailname",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "TriggeredSendExternalKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TriggeredSendExternalkey",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SendDefinitionExternalKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendDefinitionExternalKey",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "JobStatus",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "JobStatus",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "PreviewURL",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "PreviewURL",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "IsMultipart",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "IsMultipart",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Additional",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Additional",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_SendJobsfile",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_SendJobs",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "SendJobs_xm file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SendID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "FromName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FromName",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "FromEmail",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "FromEmail",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SchedTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SchedTime",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "SentTime",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SentTime",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "Subject",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Subject",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Emailname",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "TriggeredSendExternalKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TriggeredSendExternalkey",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SendDefinitionExternalKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendDefinitionExternalKey",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "JobStatus",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "JobStatus",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "PreviewURL",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "PreviewURL",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "IsMultipart",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "IsMultipart",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Additional",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Additional",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_SendJobs_xm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_SendJobs",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Remove SendJobs table duplicates",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "SendJobs file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "SendJobs_xm file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "With CTE AS\n(\n\tSELECT \n\t\t[ClientID],\n\t\t[SendID],\n\t\t[FromName],\n\t\t[FromEmail],\n\t\t[SchedTime],\n\t\t[SentTime],\n\t\t[Subject],\n\t\t[Emailname],\n\t\t[TriggeredSendExternalkey],\n\t\t[SendDefinitionExternalKey],\n\t\t[JobStatus],\n\t\t[PreviewURL],\n\t\t[IsMultipart],\n\t\t[Additional],\n\n\t\tROW_NUMBER() OVER(\n\t\t\t\t\t\t\tPARTITION BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[FromName],\n\t\t\t\t\t\t\t\t\t[FromEmail],\n\t\t\t\t\t\t\t\t\t[SchedTime],\n\t\t\t\t\t\t\t\t\t[SentTime],\n\t\t\t\t\t\t\t\t\t[Subject],\n\t\t\t\t\t\t\t\t\t[Emailname],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalkey],\n\t\t\t\t\t\t\t\t\t[SendDefinitionExternalKey],\n\t\t\t\t\t\t\t\t\t[JobStatus],\n\t\t\t\t\t\t\t\t\t[PreviewURL],\n\t\t\t\t\t\t\t\t\t[IsMultipart],\n\t\t\t\t\t\t\t\t\t[Additional]\n\n\t\t\t\t\t\t\tORDER BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[FromName],\n\t\t\t\t\t\t\t\t\t[FromEmail],\n\t\t\t\t\t\t\t\t\t[SchedTime],\n\t\t\t\t\t\t\t\t\t[SentTime],\n\t\t\t\t\t\t\t\t\t[Subject],\n\t\t\t\t\t\t\t\t\t[Emailname],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalkey],\n\t\t\t\t\t\t\t\t\t[SendDefinitionExternalKey],\n\t\t\t\t\t\t\t\t\t[JobStatus],\n\t\t\t\t\t\t\t\t\t[PreviewURL],\n\t\t\t\t\t\t\t\t\t[IsMultipart],\n\t\t\t\t\t\t\t\t\t[Additional]\n\t\t\t\t\t\t) ROW_NUM\n\n\tFROM [Import].[EmailSendJobs]\n)\nDELETE FROM CTE\nWHERE ROW_NUM >1"
+						}
+					]
+				}
+			},
+			{
+				"name": "Sent file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SendID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ListID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EventDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "BatchID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BatchID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "TriggeredSendExternalKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TriggeredExternalKey",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "CampaignID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CompaignID",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_sentFile",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_Sent",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Sent_xm file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SendID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ListID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EventDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "BatchID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BatchID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_Sent_xm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_Sent",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Remove Sent table duplicates",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Sent file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Sent_xm file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "With CTE AS\n(\n\tSELECT \n\t\t[ClientID],\n\t\t[SendID],\n\t\t[SubscriberKey],\n\t\t[EmailAddress],\n\t\t[SubscriberID],\n\t\t[ListID],\n\t\t[EventDate],\n\t\t[EventType],\n\t\t[BatchID],\n\t\t[TriggeredExternalKey],\n\t\t[CompaignID],\n\n\t\tROW_NUMBER() OVER(\n\t\t\t\t\t\t\tPARTITION BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredExternalKey],\n\t\t\t\t\t\t\t\t\t[CompaignID]\n\n\t\t\t\t\t\t\tORDER BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredExternalKey],\n\t\t\t\t\t\t\t\t\t[CompaignID]\n\t\t\t\t\t\t) ROW_NUM\n\n\tFROM [Import].[EmailSent]\n)\nDELETE FROM CTE\nWHERE ROW_NUM >1"
+						}
+					]
+				}
+			},
+			{
+				"name": "Bounces file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SendID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ListID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EventDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "BounceCategory",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Bouncecategory",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SMTPCode",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SMTPCode",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "BounceReason",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BounceReason",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "BatchID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BatchID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "TriggeredSendExternalKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TriggeredSendExternalKey",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_bounces",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_bounces",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Click data load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_clicks",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_clicks",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Click_xm data load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_clicks_xm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_clicks",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Remove clicks table duplicates",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Click_xm data load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Click data load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "With CTE AS\n(\n\tSELECT \n\t\t[ClientID],\n\t\t[SendID],\n\t\t[SubscriberKey],\n\t\t[EmailAddress],\n\t\t[SubscriberID],\n\t\t[ListID],\n\t\t[EventDate],\n\t\t[EventType],\n\t\t[SendURLID],\n\t\t[URLID],\n\t\t[URL],\n\t\t[Alias],\n\t\t[BatchID],\n\t\t[TriggeredSendExternalKey],\n\t\t[IsUnique],\n\n\t\tROW_NUMBER() OVER(\n\t\t\t\t\t\t\tPARTITION BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[SendURLID],\n\t\t\t\t\t\t\t\t\t[URLID],\n\t\t\t\t\t\t\t\t\t[URL],\n\t\t\t\t\t\t\t\t\t[Alias],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalKey],\n\t\t\t\t\t\t\t\t\t[IsUnique]\n\n\t\t\t\t\t\t\tORDER BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[SendURLID],\n\t\t\t\t\t\t\t\t\t[URLID],\n\t\t\t\t\t\t\t\t\t[URL],\n\t\t\t\t\t\t\t\t\t[Alias],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalKey],\n\t\t\t\t\t\t\t\t\t[IsUnique]\n\t\t\t\t\t\t) ROW_NUM\n\n\tFROM [Import].[EmailClicks]\n)\nDELETE FROM CTE\nWHERE ROW_NUM >1"
+						}
+					]
+				}
+			},
+			{
+				"name": "Opens file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_opens",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_opens",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Opens_xm file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_opens_xm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_opens",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Complaints file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ClientID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ClientID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SendID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SendID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberKey",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EmailAddress",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SubscriberID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubscriberID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ListID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ListID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "EventDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EventType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "BatchID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BatchID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "TriggeredSendExternalKey",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TriggeredSendExternalKey",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Domain",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Domain",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_complaints",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_complaints",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Complaints_xm file load",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "src_complaints_xm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tgt_complaints",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Log CSV fail",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "List file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "List_xm file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Attributes file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Attributes_xm file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "SendJobs file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "SendJobs_xm file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Sent file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Sent_xm file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Bounces file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Click_xm data load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Click data load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Opens file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Opens_xm file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Complaints file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					},
+					{
+						"activity": "Complaints_xm file load",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcessError]",
+						"storedProcedureParameters": {
+							"Param1": {
+								"type": "String",
+								"value": "See SSIS Log"
+							},
+							"ProcessId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.ProcessId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "logActivityFail",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Get Log Message",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Log CSV fail",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_GetLogStatus]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"LogType": {
+								"type": "String",
+								"value": "Job"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "getlogmessage",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Summary",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Log Message",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Summary",
+					"value": {
+						"value": "@activity('Get Log Message').output.value[0].Summary",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Push Slacvk Notfication",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Summary",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Icon",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://hooks.slack.com/services/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",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "text/plain"
+					},
+					"body": {
+						"value": "@concat('{\n    \"text\": \"', variables('Summary'),variables('Icon'), '\"\n}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Remove opens table duplicates",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Opens file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Opens_xm file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "With CTE AS\n(\n\tSELECT \n\t\t[ClientID],\n\t\t[SendID],\n\t\t[SubscriberKey],\n\t\t[EmailAddress],\n\t\t[SubscriberID],\n\t\t[ListID],\n\t\t[EventDate],\n\t\t[EventType],\n\t\t[BatchID],\n\t\t[TriggeredSendExternalKey],\n\t\t[IsUnique],\n\n\t\tROW_NUMBER() OVER(\n\t\t\t\t\t\t\tPARTITION BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalKey],\n\t\t\t\t\t\t\t\t\t[IsUnique]\n\n\t\t\t\t\t\t\tORDER BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalKey],\n\t\t\t\t\t\t\t\t\t[IsUnique]\n\t\t\t\t\t\t) ROW_NUM\n\n\tFROM [Import].[EmailOpens]\n)\nDELETE FROM CTE\nWHERE ROW_NUM >1"
+						}
+					]
+				}
+			},
+			{
+				"name": "Remove Compliants table duplicates",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Complaints file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Complaints_xm file load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "With CTE AS\n(\n\tSELECT \n\t\t[ClientID],\n\t\t[SendID],\n\t\t[SubscriberKey],\n\t\t[EmailAddress],\n\t\t[SubscriberID],\n\t\t[ListID],\n\t\t[EventDate],\n\t\t[EventType],\n\t\t[BatchID],\n\t\t[TriggeredSendExternalKey],\n\t\t[Domain],\n\n\t\tROW_NUMBER() OVER(\n\t\t\t\t\t\t\tPARTITION BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalKey],\n\t\t\t\t\t\t\t\t\t[Domain]\n\n\t\t\t\t\t\t\tORDER BY\n\t\t\t\t\t\t\t\t\t[ClientID],\n\t\t\t\t\t\t\t\t\t[SendID],\n\t\t\t\t\t\t\t\t\t[SubscriberKey],\n\t\t\t\t\t\t\t\t\t[EmailAddress],\n\t\t\t\t\t\t\t\t\t[SubscriberID],\n\t\t\t\t\t\t\t\t\t[ListID],\n\t\t\t\t\t\t\t\t\t[EventDate],\n\t\t\t\t\t\t\t\t\t[EventType],\n\t\t\t\t\t\t\t\t\t[BatchID],\n\t\t\t\t\t\t\t\t\t[TriggeredSendExternalKey],\n\t\t\t\t\t\t\t\t\t[Domain]\n\t\t\t\t\t\t) ROW_NUM\n\n\tFROM [Import].[EmailComplaints]\n)\nDELETE FROM CTE\nWHERE ROW_NUM >1"
+						}
+					]
+				}
+			},
+			{
+				"name": "Log Process end",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Remove Email list table Duplicates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Remove Atrributes table duplicates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Remove SendJobs table duplicates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Remove Sent table duplicates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Remove clicks table duplicates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Remove opens table duplicates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Remove Compliants table duplicates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcessEnd]",
+						"storedProcedureParameters": {
+							"ProcessId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ProcessId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "src_logprocessend",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Icon",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Log Message",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Icon",
+					"value": {
+						"value": "@activity('Get Log Message').output.value[0].Icon",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ProcessId": {
+				"type": "string"
+			},
+			"JobId": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"Summary": {
+				"type": "String"
+			},
+			"Icon": {
+				"type": "String"
+			},
+			"JobId": {
+				"type": "String",
+				"defaultValue": "1"
+			},
+			"ProcessId": {
+				"type": "String",
+				"defaultValue": "1"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-09T14:12:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

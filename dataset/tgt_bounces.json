@@ -1,0 +1,79 @@
+{
+	"name": "tgt_bounces",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ClientID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SendID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriberKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EmailAddress",
+				"type": "varchar"
+			},
+			{
+				"name": "SubscriberID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ListID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EventDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EventType",
+				"type": "varchar"
+			},
+			{
+				"name": "Bouncecategory",
+				"type": "varchar"
+			},
+			{
+				"name": "SMTPCode",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BounceReason",
+				"type": "varchar"
+			},
+			{
+				"name": "BatchID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TriggeredSendExternalKey",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "EmailBounces"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

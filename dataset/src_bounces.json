@@ -1,0 +1,77 @@
+{
+	"name": "src_bounces",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Bounces_20190902.csv",
+				"container": "exacttarget"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ClientID",
+				"type": "String"
+			},
+			{
+				"name": "SendID",
+				"type": "String"
+			},
+			{
+				"name": "SubscriberKey",
+				"type": "String"
+			},
+			{
+				"name": "EmailAddress",
+				"type": "String"
+			},
+			{
+				"name": "SubscriberID",
+				"type": "String"
+			},
+			{
+				"name": "ListID",
+				"type": "String"
+			},
+			{
+				"name": "EventDate",
+				"type": "String"
+			},
+			{
+				"name": "EventType",
+				"type": "String"
+			},
+			{
+				"name": "BounceCategory",
+				"type": "String"
+			},
+			{
+				"name": "SMTPCode",
+				"type": "String"
+			},
+			{
+				"name": "BounceReason",
+				"type": "String"
+			},
+			{
+				"name": "BatchID",
+				"type": "String"
+			},
+			{
+				"name": "TriggeredSendExternalKey",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,883 @@
+{
+	"name": "Email Compaign",
+	"properties": {
+		"activities": [
+			{
+				"name": "Log Start",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogJob]",
+						"storedProcedureParameters": {
+							"JobName": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PackageDescr')",
+									"type": "Expression"
+								}
+							},
+							"JobParams": {
+								"type": "String",
+								"value": {
+									"value": "@concat('Load Date = ',formatDateTime(variables('Setdate'),'dd/MM/yyyy'))",
+									"type": "Expression"
+								}
+							},
+							"JobStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "tomjones@mail.com"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SpLogJobId",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set Job Id",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JobId",
+					"value": {
+						"value": "@{activity('Log Start').output.firstRow.JobId}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Log File Download",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set Job Id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcess]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "Tomjones@gmail.com"
+							},
+							"ProcessName": {
+								"type": "String",
+								"value": "Check if CSVs exist"
+							},
+							"ProcessParams": {
+								"type": "String",
+								"value": null
+							},
+							"ProcessStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ProcessType": {
+								"type": "String",
+								"value": "Blob File Existence Verification"
+							},
+							"ShowResult": {
+								"type": "Boolean",
+								"value": {
+									"value": "@variables('ShowResult')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LogFileDownload",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set Process Id",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log File Download",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ProcessId",
+					"value": {
+						"value": "@{activity('Log File Download').output.firstRow.ProcessId}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "For Each Loop Container",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "ForEach Collection Lookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('ForEach Collection Lookup').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Get Metadata1",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "src_fileMetadata",
+									"type": "DatasetReference",
+									"parameters": {
+										"Container": {
+											"value": "@item().BlobStorageContainer1",
+											"type": "Expression"
+										},
+										"File": {
+											"value": "@concat(item().FileToDownload,'_',formatDateTime(variables('FileDate'),'yyyyMMdd'),'.csv')",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"exists"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "if file exists",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Get Metadata1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('Get Metadata1').output.exists",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "log Missing File",
+										"type": "Script",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"linkedServiceName": {
+											"referenceName": "LS_AzureSQLDB",
+											"type": "LinkedServiceReference"
+										},
+										"typeProperties": {
+											"scripts": [
+												{
+													"type": "Query",
+													"text": {
+														"value": "@concat('INSERT INTO log.MissingFile (JobId, MissingFilename,MissingTimestamp,IsMandatory)\nVALUES (',variables('JobId'),',''',item().FileToDownload,formatDateTime(adddays(utcnow(),-1),'_yyyyMMdd'),'.csv'',''',formatDateTime(utcnow(),'yyyy-MM-dd hh:mm:ss'),''',''',''')')",
+														"type": "Expression"
+													}
+												}
+											]
+										}
+									},
+									{
+										"name": "Get Log Message",
+										"type": "Lookup",
+										"dependsOn": [
+											{
+												"activity": "log Missing File",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderStoredProcedureName": "[dbo].[sp_GetLogStatus]",
+												"storedProcedureParameters": {
+													"JobId": {
+														"type": "Int32",
+														"value": {
+															"value": "@variables('JobId')",
+															"type": "Expression"
+														}
+													},
+													"LogType": {
+														"type": "String",
+														"value": "Missing File"
+													}
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"dataset": {
+												"referenceName": "LogMessage",
+												"type": "DatasetReference"
+											},
+											"firstRowOnly": false
+										}
+									},
+									{
+										"name": "Summary",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Get Log Message",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "Summary",
+											"value": {
+												"value": "@activity('Get Log Message').output.value[0].Summary",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Icon",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Get Log Message",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "Icon",
+											"value": {
+												"value": "@activity('Get Log Message').output.value[0].Icon",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Slack Notification",
+										"type": "WebActivity",
+										"dependsOn": [
+											{
+												"activity": "Summary",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											},
+											{
+												"activity": "Icon",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"url": "https://hooks.slack.com/services/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",
+											"method": "POST",
+											"headers": {
+												"content-type": "text/plain"
+											},
+											"body": {
+												"value": "@concat('{\n    \"text\": \"', variables('Summary'),variables('Icon'), '\"\n}')",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Log process End",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "For Each Loop Container",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcessEnd]",
+						"storedProcedureParameters": {
+							"ProcessId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('ProcessId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LogProcessEnd",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Truncate table",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Log process End",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE import.EmailList\nTRUNCATE TABLE import.EmailAttributes\nTRUNCATE TABLE import.EmailSendJobs\nTRUNCATE TABLE import.EmailSent\nTRUNCATE TABLE import.EmailBounces\nTRUNCATE TABLE import.EmailClicks\nTRUNCATE TABLE import.EmailOpens\nTRUNCATE TABLE import.EmailComplaints\n"
+						}
+					]
+				}
+			},
+			{
+				"name": "Log CSV Import",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Truncate table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcess]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "tomjones@gmail.com"
+							},
+							"ProcessName": {
+								"type": "String",
+								"value": "Import CSVs"
+							},
+							"ProcessParams": {
+								"type": "String",
+								"value": null
+							},
+							"ProcessStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ProcessType": {
+								"type": "String",
+								"value": "SSIS Dataflow"
+							},
+							"ShowResult": {
+								"type": "Boolean",
+								"value": {
+									"value": "@variables('ShowResult')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LogCSVImport",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Get Process Id",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log CSV Import",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ProcessId",
+					"value": {
+						"value": "@{activity('Log CSV Import').output.firstRow.ProcessId}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Email Compaign",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_EmailCampaigns]",
+						"storedProcedureParameters": {
+							"Jobdate": {
+								"type": "DateTime",
+								"value": {
+									"value": "@variables('Date')",
+									"type": "Expression"
+								}
+							},
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "src_emailcompaign",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Log Job End",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Email Compaign",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogJobEnd]",
+						"storedProcedureParameters": {
+							"jobId": {
+								"type": "String",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "src_logJobEnd",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Get Log Message2",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Log Job End",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_GetLogStatus]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							},
+							"LogType": {
+								"type": "String",
+								"value": "Job"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "getlogmessage",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Summary2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Log Message2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Summary",
+					"value": {
+						"value": "@activity('Get Log Message2').output.value[0].Summary",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Icon2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Log Message2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Icon",
+					"value": {
+						"value": "@activity('Get Log Message2').output.value[0].Icon",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Push Slack Notification2",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Summary2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Icon2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://hooks.slack.com/services/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",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "text/plain"
+					},
+					"body": {
+						"value": "@concat('{\n    \"text\": \"', variables('Summary'),variables('Icon'), '\"\n}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Execute Pipeline2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Get Process Id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Child Email Compaign",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"ProcessId": {
+							"value": "@variables('ProcessId')",
+							"type": "Expression"
+						},
+						"JobId": {
+							"value": "@variables('JobId')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "ForEach Collection Lookup",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set Process Id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT\n[FileToDownload],\n[AppendDateToFileName],\n[FileColumnHeaders],\n[BlobStorageContainer1],\n[Mandatory]\nFROM dbo.EmailMetadata",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQL_Scripts_dataset",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"variables": {
+			"JobId": {
+				"type": "String",
+				"defaultValue": "1"
+			},
+			"PackageDescr": {
+				"type": "String",
+				"defaultValue": "Email Campaigns ETL"
+			},
+			"Setdate": {
+				"type": "String",
+				"defaultValue": "@utcnow()"
+			},
+			"Date": {
+				"type": "String",
+				"defaultValue": "2022-08-29"
+			},
+			"ShowResult": {
+				"type": "Boolean",
+				"defaultValue": true
+			},
+			"ProcessId": {
+				"type": "String",
+				"defaultValue": "1"
+			},
+			"loopArray": {
+				"type": "Array",
+				"defaultValue": [
+					"1"
+				]
+			},
+			"Summary": {
+				"type": "String"
+			},
+			"Icon": {
+				"type": "String"
+			},
+			"FileDate": {
+				"type": "String",
+				"defaultValue": "@utcnow()"
+			},
+			"CurrentDate": {
+				"type": "String",
+				"defaultValue": "@formatDateTime(addDays(utcnow(),-1),'yyyy-MM-dd')"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-10T12:27:11Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

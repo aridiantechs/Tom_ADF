@@ -1,0 +1,838 @@
+{
+	"name": "Child Income Access",
+	"properties": {
+		"activities": [
+			{
+				"name": "Foreach Brand In Player Account Date",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.BrandList_PA",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Get Player Account Arg",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('DECLARE @DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' @ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' @RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' @BrandId VARCHAR(100) =','''', pipeline().parameters.Brand_PA,'''',',',\n' @AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' @AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''@DateParam'', @DateStr), ''@AccountName'', @AccountName), ''@AccountKey'', @AccountKey), ''@ContainerParam'', @ContainerParam) + '' '' + @RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Player Account''\nAND Brand = @BrandId\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "GetPlayerAccountArg",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "Get Site Earnings Arg",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Populate Import Player Account",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('DECLARE @DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' @ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' @RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' @BrandId VARCHAR(100) =','''', pipeline().parameters.Brand_PA,'''',',',\n' @AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' @AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''@DateParam'', @DateStr), ''@AccountName'', @AccountName), ''@AccountKey'', @AccountKey), ''@ContainerParam'', @ContainerParam) + '' '' + @RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Earnings By Site''\nAND Brand = @BrandId\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "GetSiteEarningsArg",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "Set Current File",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Get Player Account Arg",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "CurrentFile",
+								"value": {
+									"value": "@concat('incomeaccess_playeraccounts_',pipeline().parameters.Brand,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)\n",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Populate Import Player Account",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set Current File",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "Date",
+											"value": {
+												"value": "@formatDateTime(utcnow(),'dd/MM/yyyy')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "Date",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Date",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "rowid",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "RowId",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Currency Symbol",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "CurrencySymbol",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Total Records",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "TotalRecords",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "MerchantID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "MerchantId",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Merchant",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "MerchantName",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Username",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "UserName",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Site ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SiteId",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Creative Name",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "CreativeName",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Player ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PlayerId",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Registration Date",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "RegistrationDate",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "First Deposit",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "FirstDeposit",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "CPA Commission",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "TotalCpaCommission",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "CPA count",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "CpaCommissionCount",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Total Commission",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "TotalCommission",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "New",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "New",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Net revenue",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "NetRevenue",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "LastClickReferralURL",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "LastClickReferralURL",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "LastClickIP",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "LastClickIP",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "LastClickCountry",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "LastClickCountry",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Deposits",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Deposits",
+												"type": "Decimal",
+												"physicalType": "decimal",
+												"scale": 2,
+												"precision": 12
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "src_importPlayerAccount",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "tgt_PlayerAccount",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Populate Import_SiteEarning",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set Site Earning File name",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "Date",
+											"value": {
+												"value": "@formatDateTime(utcnow(),'dd/MM/yyyy')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "Date",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Date",
+												"type": "DateTime",
+												"physicalType": "datetime"
+											}
+										},
+										{
+											"source": {
+												"name": "rowid",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "RowId",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Currency Symbol",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "CurrencySymbol",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Total Records",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "TotalRecords",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "MerchantID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "MerchantId",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Merchant",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "MerchantName",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Site ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SiteId",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Site Name",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SiteName",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Username",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "UserName",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Country",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Country",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Impressions",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Impressions",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Clicks",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Clicks",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "src_ImportSiteEarning",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "tgt_ImportSiteEarning",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Set Site Earning File name",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Get Site Earnings Arg",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "SiteEarningCsvFileName",
+								"value": {
+									"value": "@concat('incomeaccess_earnings_bysite_',pipeline().parameters.Brand,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)\n",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set Failed File Name",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Populate Import Player Account",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FailCsvFileName",
+								"value": {
+									"value": "@variables('CurrentFile')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set Failed CSV File Name",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Populate Import_SiteEarning",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FailCsvFileName",
+								"value": {
+									"value": "@variables('SiteEarningCsvFileName')",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Log CSV Fail",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Foreach Brand In Player Account Date",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcessError]",
+						"storedProcedureParameters": {
+							"Param1": {
+								"type": "String",
+								"value": {
+									"value": "@variables('FailCsvFileName')",
+									"type": "Expression"
+								}
+							},
+							"ProcessId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.ProcessId_PA",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "src_LogCsvFail",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Log CSV import end",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Foreach Brand In Player Account Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcessEnd]",
+						"storedProcedureParameters": {
+							"ProcessId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.ProcessId_PA",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "src_LogCsvImportEnd",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ProcessId_PA": {
+				"type": "string"
+			},
+			"CurrentDate": {
+				"type": "string"
+			},
+			"BlobContainerIncomeAccess": {
+				"type": "string",
+				"defaultValue": "incomeaccess"
+			},
+			"BlobStorageAccountKey": {
+				"type": "string"
+			},
+			"BlobStorageAccountName": {
+				"type": "string"
+			},
+			"BlobStorageContainer": {
+				"type": "string",
+				"defaultValue": "a"
+			},
+			"RayGunApiKey": {
+				"type": "string"
+			},
+			"Brand_PA": {
+				"type": "string"
+			},
+			"Brand": {
+				"type": "string"
+			},
+			"BrandList_PA": {
+				"type": "array"
+			}
+		},
+		"variables": {
+			"CurrentFile": {
+				"type": "String"
+			},
+			"SiteEarningCsvFileName": {
+				"type": "String"
+			},
+			"FailCsvFileName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-06T12:18:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

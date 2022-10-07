@@ -1,0 +1,17 @@
+{
+	"name": "tgtTradeSurgePlayer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "import",
+			"table": "AggregatorSitePlayer"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

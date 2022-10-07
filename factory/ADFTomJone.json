@@ -1,0 +1,9 @@
+{
+	"name": "ADFTomJone",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "4b7f8a34-7d8f-40de-8d9e-4d93bc67fb3c",
+		"tenantId": "9c4c795c-40f2-4d36-ab00-8c8051342106"
+	}
+}

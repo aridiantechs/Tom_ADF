@@ -1,0 +1,37 @@
+{
+	"name": "tgt_attributes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ClientID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriberKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EmailAddress",
+				"type": "varchar"
+			},
+			{
+				"name": "SubscriberID",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "EmailAttributes"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,23 @@
+{
+	"name": "tgtPPCCostMountMedia",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "a",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "PpcCost_MountMedia"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

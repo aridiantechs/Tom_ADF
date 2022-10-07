@@ -1,0 +1,70 @@
+{
+	"name": "LogFileDownload",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "JobId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProcessType",
+				"type": "varchar"
+			},
+			{
+				"name": "ProcessName",
+				"type": "varchar"
+			},
+			{
+				"name": "ProcessParams",
+				"type": "varchar"
+			},
+			{
+				"name": "StartDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ProcessStatus",
+				"type": "varchar"
+			},
+			{
+				"name": "ModifiedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "EndDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LastModified",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ErrorMsg",
+				"type": "varchar"
+			},
+			{
+				"name": "ProcessId",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "log",
+			"table": "Process"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

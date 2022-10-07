@@ -1,0 +1,65 @@
+{
+	"name": "srcTradeSurgePlayer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat('tradesurge_keywords_',formatDateTime(addDays(utcnow(),-1),'yyyyMMdd'),'.csv')",
+					"type": "Expression"
+				},
+				"folderPath": "tradesurge",
+				"container": "optibid"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Brand",
+				"type": "String"
+			},
+			{
+				"name": "GUID",
+				"type": "String"
+			},
+			{
+				"name": "Channel",
+				"type": "String"
+			},
+			{
+				"name": "Keyword",
+				"type": "String"
+			},
+			{
+				"name": "MatchType",
+				"type": "String"
+			},
+			{
+				"name": "Label",
+				"type": "String"
+			},
+			{
+				"name": "SuperLabel",
+				"type": "String"
+			},
+			{
+				"name": "MegaLabel",
+				"type": "String"
+			},
+			{
+				"name": "DeviceType",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

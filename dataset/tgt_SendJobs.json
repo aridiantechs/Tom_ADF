@@ -1,0 +1,80 @@
+{
+	"name": "tgt_SendJobs",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ClientID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SendID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FromName",
+				"type": "varchar"
+			},
+			{
+				"name": "FromEmail",
+				"type": "varchar"
+			},
+			{
+				"name": "SchedTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "SentTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Subject",
+				"type": "varchar"
+			},
+			{
+				"name": "Emailname",
+				"type": "varchar"
+			},
+			{
+				"name": "TriggeredSendExternalkey",
+				"type": "varchar"
+			},
+			{
+				"name": "SendDefinitionExternalKey",
+				"type": "varchar"
+			},
+			{
+				"name": "JobStatus",
+				"type": "varchar"
+			},
+			{
+				"name": "PreviewURL",
+				"type": "varchar"
+			},
+			{
+				"name": "IsMultipart",
+				"type": "varchar"
+			},
+			{
+				"name": "Additional",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "EmailSendJobs"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

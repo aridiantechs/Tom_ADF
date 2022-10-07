@@ -1,0 +1,27 @@
+{
+	"name": "src_importPlayerAccount",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat('incomeaccess_playeraccounts_SpinRider_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv')\n",
+					"type": "Expression"
+				},
+				"container": "incomeaccess"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

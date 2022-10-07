@@ -1,0 +1,50 @@
+{
+	"name": "tgt_ListFileLoad",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ClientID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ListID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "Description",
+				"type": "varchar"
+			},
+			{
+				"name": "DateCreated",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Active",
+				"type": "varchar"
+			},
+			{
+				"name": "ListType",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "import",
+			"table": "EmailList"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,89 @@
+{
+	"name": "src_ImportSiteEarning",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat('incomeaccess_earnings_bysite_SpinRider_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv')\n",
+					"type": "Expression"
+				},
+				"folderPath": "earnings_bysite",
+				"container": "incomeaccess"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "rowid",
+				"type": "String"
+			},
+			{
+				"name": "Currency Symbol",
+				"type": "String"
+			},
+			{
+				"name": "Total Records",
+				"type": "String"
+			},
+			{
+				"name": "MerchantID",
+				"type": "String"
+			},
+			{
+				"name": "Merchant",
+				"type": "String"
+			},
+			{
+				"name": "Site ID",
+				"type": "String"
+			},
+			{
+				"name": "Site Name",
+				"type": "String"
+			},
+			{
+				"name": "Affiliate ID",
+				"type": "String"
+			},
+			{
+				"name": "Username",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			},
+			{
+				"name": "Impressions",
+				"type": "String"
+			},
+			{
+				"name": "Clicks",
+				"type": "String"
+			},
+			{
+				"name": "Click-Through Ratio",
+				"type": "String"
+			},
+			{
+				"name": "Registrations",
+				"type": "String"
+			},
+			{
+				"name": "Registration Ratio",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

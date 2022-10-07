@@ -1,0 +1,1400 @@
+{
+	"name": "Income Access",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set Date",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SetDate",
+					"value": {
+						"value": "@formatDateTime(concat(formatDateTime(utcnow(),'MM/dd/yyyy')), 'MM/dd/yyyy')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Log Start",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogJob]",
+						"storedProcedureParameters": {
+							"JobName": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PackageDescr')",
+									"type": "Expression"
+								}
+							},
+							"JobParams": {
+								"type": "String",
+								"value": {
+									"value": "@concat('Load Date = ',formatDateTime(variables('SetDate'),'dd/MM/yyyy'))",
+									"type": "Expression"
+								}
+							},
+							"JobStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "tomjone@mail.com"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Income_SpLogJobId",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Truncate import tables",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Set Job Id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE import.PlayerAccount;\nTRUNCATE TABLE import.SiteEarning;\nTRUNCATE TABLE import.PaymentHistory;\nTRUNCATE TABLE import.Merchant;\nTRUNCATE TABLE import.ACIDReport;"
+						}
+					]
+				}
+			},
+			{
+				"name": "Get MTD List",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Truncate import tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_GetExecutionPeriod]",
+						"storedProcedureParameters": {
+							"DayMarker": {
+								"type": "DateTime",
+								"value": {
+									"value": "@variables('SetDate')",
+									"type": "Expression"
+								}
+							},
+							"Period": {
+								"type": "String",
+								"value": "MTD"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SpGetMTDList",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set Job Id",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "JobId",
+					"value": {
+						"value": "@{activity('Log Start').output.firstRow.JobId}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set DateList",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get MTD List",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "DateList",
+					"value": {
+						"value": "@activity('Get MTD List').output.value",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get Active Brands",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set DateList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@concat('SELECT Brand FROM DIM.Brand WHERE Active != 0 \nAND IaStartDate <= Convert(varchar,', variables('SetDate'),'101)')",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "GetActiveBrands",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set Brand List",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Active Brands",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "BandList",
+					"value": {
+						"value": "@activity('Get Active Brands').output.value",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get Active Brands ACID",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set Brand List",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@concat('SELECT Brand FROM DIM.Brand WHERE Active != 0 \nAND IaStartDate <= Convert(varchar,', variables('SetDate'),'101)')",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "GetActiveBrandsACID",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set BrandList_ACID",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Active Brands ACID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "BrandList_ACID",
+					"value": {
+						"value": "@activity('Get Active Brands ACID').output.value",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Foreach Date in MTD",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set BrandList_ACID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('DateList')",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Brand List Plyr Acct",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('SELECT Brand FROM DIM.Brand WHERE Active != 0 \nAND IaStartDate <= Convert(varchar,', variables('CurrentDate'),',101)')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "BrandListPlyrAcct",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": false
+							}
+						},
+						{
+							"name": "Set BrandList_PA",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Brand List Plyr Acct",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "BrandList_PA",
+								"value": {
+									"value": "@activity('Brand List Plyr Acct').output.value",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Log CSV Import",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Set BrandList_PA",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[dbo].[LogProcess]",
+									"storedProcedureParameters": {
+										"JobId": {
+											"type": "Int32",
+											"value": {
+												"value": "@variables('JobId')",
+												"type": "Expression"
+											}
+										},
+										"ModifiedBy": {
+											"type": "String",
+											"value": "tomjones@mail.com"
+										},
+										"ProcessName": {
+											"type": "String",
+											"value": {
+												"value": "@variables('PackageDescr')",
+												"type": "Expression"
+											}
+										},
+										"ProcessParams": {
+											"type": "String",
+											"value": {
+												"value": "@concat('Load Date = ',variables('CurrentDate'))",
+												"type": "Expression"
+											}
+										},
+										"ProcessStatus": {
+											"type": "String",
+											"value": "Started"
+										},
+										"ProcessType": {
+											"type": "String",
+											"value": "SSIS Import"
+										},
+										"ShowResult": {
+											"type": "Boolean",
+											"value": {
+												"value": "@variables('ShowResult')",
+												"type": "Expression"
+											}
+										}
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "Log_CSVImport",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "Set ProcessId_PA",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Log CSV Import",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "ProcessId_PA",
+								"value": {
+									"value": "@{activity('Log CSV Import').output.firstRow.ProcessId}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Execute Child Income Access",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Set ProcessId_PA",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Child Income Access",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"ProcessId_PA": {
+										"value": "@variables('ProcessId_PA')",
+										"type": "Expression"
+									},
+									"CurrentDate": {
+										"value": "@variables('CurrentDate')",
+										"type": "Expression"
+									},
+									"Brand_PA": {
+										"value": "@variables('Brand_PA')",
+										"type": "Expression"
+									},
+									"Brand": {
+										"value": "@variables('Brand')",
+										"type": "Expression"
+									},
+									"BrandList_PA": {
+										"value": "@variables('BrandList_PA')",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Log CSV_Import",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Foreach Date in MTD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcess]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "tomjones@mail.com"
+							},
+							"ProcessName": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PackageDescr')",
+									"type": "Expression"
+								}
+							},
+							"ProcessParams": {
+								"type": "String",
+								"value": null
+							},
+							"ProcessStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ProcessType": {
+								"type": "String",
+								"value": "SSIS Import"
+							},
+							"ShowResult": {
+								"type": "Boolean",
+								"value": {
+									"value": "@variables('ShowResult')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LogCSV_Import",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "ForEach Merchant List",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set Process Id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('BandList')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Get Member Group List Arg",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',variables('CurrentDate'),'''',',',\n' ContainerParam VARCHAR(100) =','''', variables('BlobContainerIncomeAccess'),'''',',',\n' RayGunKey VARCHAR(100) = ','''',variables('RayGunApiKey'),'''',',',\n' BrandId VARCHAR(100) =','''', variables('Brand_PA'),'''',',',\n' AccountName VARCHAR(100) =','''', variables('BlobStorageAccountName'),'''',',',\n' AccountKey VARCHAR(1024) =','''', variables('BlobStorageAccountKey'),'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Member Group List''\nAND Brand = BrandId\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "GetMemberGroupListArg",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "Set Current member File",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Get Member Group List Arg",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "CurrentCsvMemberGroupList",
+								"value": {
+									"value": "@concat('incomeaccess_membergrouplist_',variables('Brand'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Populate import_Member",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Check File Exist",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "src_ImportMember",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "tgt_importMerchant",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Check File Exist",
+							"type": "GetMetadata",
+							"dependsOn": [
+								{
+									"activity": "Set Current member File",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "src_ImportMember",
+									"type": "DatasetReference"
+								},
+								"fieldList": [
+									"exists"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "Log_CSV_Fail",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Check File Exist",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[dbo].[LogProcessError]",
+									"storedProcedureParameters": {
+										"Param1": {
+											"type": "String",
+											"value": {
+												"value": "@variables('CurrentCsvMemberGroupList')",
+												"type": "Expression"
+											}
+										},
+										"ProcessId": {
+											"type": "String",
+											"value": {
+												"value": "@variables('ProcessId_PA')",
+												"type": "Expression"
+											}
+										}
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "log_CSV_Fail",
+									"type": "DatasetReference"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Log CSV_Import_End",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "ForEach Merchant List",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcessEnd]",
+						"storedProcedureParameters": {
+							"ProcessId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('ProcessId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LogCSVImportEnd",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set Process Id",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log CSV_Import",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ProcessId",
+					"value": {
+						"value": "@{activity('Log CSV_Import').output.firstRow.ProcessId}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Log CSV Import ACID",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Log CSV_Import_End",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcess]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							},
+							"ModifiedBy": {
+								"type": "String",
+								"value": "tomjones@mail.com"
+							},
+							"ProcessName": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PackageDescr')",
+									"type": "Expression"
+								}
+							},
+							"ProcessParams": {
+								"type": "String",
+								"value": null
+							},
+							"ProcessStatus": {
+								"type": "String",
+								"value": "Started"
+							},
+							"ProcessType": {
+								"type": "String",
+								"value": "SSIS Import"
+							},
+							"ShowResult": {
+								"type": "Boolean",
+								"value": {
+									"value": "@variables('ShowResult')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LogCSVImportACID",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "ForEach ACID",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set ACID ProcessId",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('BrandList_ACID')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Get Member_Group_List_Arg",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',variables('CurrentDate'),'''',',',\n' ContainerParam VARCHAR(100) =','''', variables('BlobContainerIncomeAccess'),'''',',',\n' RayGunKey VARCHAR(100) = ','''',variables('RayGunApiKey'),'''',',',\n' BrandId VARCHAR(100) =','''', variables('Brand_PA'),'''',',',\n' AccountName VARCHAR(100) =','''', variables('BlobStorageAccountName'),'''',',',\n' AccountKey VARCHAR(1024) =','''', variables('BlobStorageAccountKey'),'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''ACID Report''\nAND Brand = BrandId\n')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "GetMemberGroupListArgACID",
+									"type": "DatasetReference"
+								}
+							}
+						},
+						{
+							"name": "CurrentCsvACIDReport",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Get Member_Group_List_Arg",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "CurrentCsvACIDReport",
+								"value": {
+									"value": "@concat('incomeaccess_acidapi_',variables('Brand'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Populate ACID",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "CurrentCsvACIDReport",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "src_PopulateACID",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "tgt_ImportACID",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "logcsvfail",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Populate ACID",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[dbo].[LogProcessError]",
+									"storedProcedureParameters": {
+										"Param1": {
+											"type": "String",
+											"value": {
+												"value": "@variables('CurrentCsvACIDReport')",
+												"type": "Expression"
+											}
+										},
+										"ProcessId": {
+											"type": "String",
+											"value": {
+												"value": "@variables('ProcessId')",
+												"type": "Expression"
+											}
+										}
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "logcsvfail",
+									"type": "DatasetReference"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Log CSV import ACID end",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "ForEach ACID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogProcessEnd]",
+						"storedProcedureParameters": {
+							"ProcessId": {
+								"type": "Int32",
+								"value": {
+									"value": "@{variables('ProcessId')}",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "LogCSVimportACIDend",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Execute Child Income Access Sp Exec",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Log CSV import ACID end",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Child Income Access Sp Exec",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"JobId": {
+							"value": "@variables('JobId')",
+							"type": "Expression"
+						},
+						"SetDate": {
+							"value": "@variables('SetDate')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "get ACID log message",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Log CSV import ACID end",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_GetLogStatus]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@variables('JobId')",
+									"type": "Expression"
+								}
+							},
+							"LogType": {
+								"type": "String",
+								"value": "Job"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "getACIDlogmessage",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Summary",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get ACID log message",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Summary",
+					"value": {
+						"value": "@activity('get ACID log message').output.value[0].Summary",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Icon",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get ACID log message",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Icon",
+					"value": {
+						"value": "@activity('get ACID log message').output.value[0].Icon",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Slack Notification",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Summary",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Icon",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://hooks.slack.com/services/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",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "text/plain"
+					},
+					"body": {
+						"value": "@concat('{\n    \"text\": \"', variables('Summary'),variables('Icon'), '\"\n}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set ACID ProcessId",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Log CSV Import ACID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ProcessId",
+					"value": {
+						"value": "@{activity('Log CSV Import ACID').output.firstRow.ProcessId}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"SetDate": {
+				"type": "String"
+			},
+			"PackageDescr": {
+				"type": "String",
+				"defaultValue": "Income Access ETL"
+			},
+			"JobId": {
+				"type": "String"
+			},
+			"DateList": {
+				"type": "Array"
+			},
+			"BandList": {
+				"type": "Array"
+			},
+			"BrandList_ACID": {
+				"type": "Array"
+			},
+			"CurrentDate": {
+				"type": "String",
+				"defaultValue": "2021/02/15"
+			},
+			"BrandList_PA": {
+				"type": "Array"
+			},
+			"ShowResult": {
+				"type": "Boolean",
+				"defaultValue": true
+			},
+			"ProcessId_PA": {
+				"type": "String"
+			},
+			"Brand_PA": {
+				"type": "String",
+				"defaultValue": "SpinRider"
+			},
+			"Brand": {
+				"type": "String",
+				"defaultValue": "SpinRider"
+			},
+			"BlobContainerIncomeAccess": {
+				"type": "String",
+				"defaultValue": "incomeaccess"
+			},
+			"BlobStorageAccountKey": {
+				"type": "String"
+			},
+			"BlobStorageAccountName": {
+				"type": "String"
+			},
+			"BlobStorageContainer": {
+				"type": "String",
+				"defaultValue": "a"
+			},
+			"RayGunApiKey": {
+				"type": "String"
+			},
+			"CurrentCsvMemberGroupList": {
+				"type": "String"
+			},
+			"ProcessId": {
+				"type": "String"
+			},
+			"CurrentCsvACIDReport": {
+				"type": "String"
+			},
+			"Summary": {
+				"type": "String"
+			},
+			"Icon": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-06T13:53:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,897 @@
+{
+	"name": "Child Income Access Sp Exec",
+	"properties": {
+		"activities": [
+			{
+				"name": "EXEC sp_Merchant",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_Merchant]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "EXEC_sp_Merchant",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "EXEC sp_SiteEarning",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "EXEC sp_Merchant",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_SiteEarning]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "EXEC_sp_SiteEarning",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "EXEC sp_ACIDReport",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "EXEC sp_PlayerAccount",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_ACIDReport]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "EXEC_sp_ACIDReport",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Immediate VIP RBC Statuses",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Merchant Campaign IDs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_VipRbcStatusForToday]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"PlatformId": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PlatformId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Immediate_VIP_RBC_Statuses",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Assign Hosts",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Immediate VIP RBC Statuses",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_AssignVIPs]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"PlatformId": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PlatformId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Assign_Hosts",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "sp_SetIncomeAccessEtlPartitionsDirty",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Assign Hosts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_SetIncomeAccessEtlPartitionsDirty]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"PlatformId": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PlatformId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "sp_SetIncomeAccessEtlPartitionsDirty",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Materialise Marketing Costs",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "IA Tracking",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_MarketingCosts]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"LoadDate": {
+								"type": "DateTime",
+								"value": {
+									"value": "@pipeline().parameters.SetDate",
+									"type": "Expression"
+								}
+							},
+							"StartDate": {
+								"type": "DateTime",
+								"value": null
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Materialise_Marketing_Costs",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "IA Tracking",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "sp_SetIncomeAccessEtlPartitionsDirty",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_MtdSweepIA]",
+						"storedProcedureParameters": {
+							"Date": {
+								"type": "DateTime",
+								"value": {
+									"value": "@pipeline().parameters.SetDate",
+									"type": "Expression"
+								}
+							},
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"processName": {
+								"type": "String",
+								"value": "Sweep"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "IA_Tracking",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Assign Repayment Cohorts",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Materialise Marketing Costs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_AssignAcqCohort]",
+						"storedProcedureParameters": {
+							"Date": {
+								"type": "DateTime",
+								"value": {
+									"value": "@pipeline().parameters.SetDate",
+									"type": "Expression"
+								}
+							},
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Assign_Repayment_Cohorts",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Get Repayment Status",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Assign Repayment Cohorts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_RepaymentStatus]",
+						"storedProcedureParameters": {
+							"Date": {
+								"type": "DateTime",
+								"value": {
+									"value": "@pipeline().parameters.SetDate",
+									"type": "Expression"
+								}
+							},
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "sp_RepaymentStatus",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Update RepaymentTrackingId",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Get Repayment Status",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_MarketingCosts_RepaymentTrk]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"LoadDate": {
+								"type": "DateTime",
+								"value": {
+									"value": "@pipeline().parameters.SetDate",
+									"type": "Expression"
+								}
+							},
+							"StartDate": {
+								"type": "DateTime",
+								"value": null
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Update_RepaymentTrackingId",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Affiliate and Parent Spend",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Update RepaymentTrackingId",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_CalculateLatestAffSpend]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Affiliate_and_Parent_Spend",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Validation Summary Check",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Affiliate and Parent Spend",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_ValidationSummaryCheck]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"param1": {
+								"type": "String",
+								"value": "0"
+							},
+							"param2": {
+								"type": "String",
+								"value": null
+							},
+							"param3": {
+								"type": "String",
+								"value": null
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Validation_Summary_Check",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Log_Package_End",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Validation Summary Check",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[LogJobEnd]",
+						"storedProcedureParameters": {
+							"jobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Log_Package_End",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "get log message",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Log_Package_End",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_GetLogStatus]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "Int32",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"LogType": {
+								"type": "String",
+								"value": "Job"
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "get_log_message",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Set Summary",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get log message",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Summary",
+					"value": {
+						"value": "@activity('get log message').output.value[0].Summary",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Icon",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "get log message",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Icon",
+					"value": {
+						"value": "@activity('get log message').output.value[0].Icon",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Push Slack Notification",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Set Summary",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set Icon",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://hooks.slack.com/services/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",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "text/plain"
+					},
+					"body": {
+						"value": "@concat('{\n    \"text\": \"', variables('Summary'),variables('Icon'), '\"\n}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "EXEC sp_PlayerAccount",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "EXEC sp_SiteEarning",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_PlayerAccount]",
+						"storedProcedureParameters": {
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							},
+							"PlatformId": {
+								"type": "String",
+								"value": {
+									"value": "@variables('PlatformId')",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "EXEC_sp_PlayerAccount",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "Merchant Campaign IDs",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "EXEC sp_ACIDReport",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[sp_UpdateMerchantCampaignIds]",
+						"storedProcedureParameters": {
+							"Date": {
+								"type": "DateTime",
+								"value": {
+									"value": "@pipeline().parameters.SetDate",
+									"type": "Expression"
+								}
+							},
+							"JobId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.JobId",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "sp_Merchant_Campaign_IDs",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"JobId": {
+				"type": "string"
+			},
+			"SetDate": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"Summary": {
+				"type": "String"
+			},
+			"Icon": {
+				"type": "String"
+			},
+			"PlatformId": {
+				"type": "String",
+				"defaultValue": "1"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-06T14:15:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

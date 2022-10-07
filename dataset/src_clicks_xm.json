@@ -1,0 +1,85 @@
+{
+	"name": "src_clicks_xm",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "clicks_xm_20220528.csv",
+				"container": "exacttarget"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ClientID",
+				"type": "String"
+			},
+			{
+				"name": "SendID",
+				"type": "String"
+			},
+			{
+				"name": "SubscriberKey",
+				"type": "String"
+			},
+			{
+				"name": "EmailAddress",
+				"type": "String"
+			},
+			{
+				"name": "SubscriberID",
+				"type": "String"
+			},
+			{
+				"name": "ListID",
+				"type": "String"
+			},
+			{
+				"name": "EventDate",
+				"type": "String"
+			},
+			{
+				"name": "EventType",
+				"type": "String"
+			},
+			{
+				"name": "SendURLID",
+				"type": "String"
+			},
+			{
+				"name": "URLID",
+				"type": "String"
+			},
+			{
+				"name": "URL",
+				"type": "String"
+			},
+			{
+				"name": "Alias",
+				"type": "String"
+			},
+			{
+				"name": "BatchID",
+				"type": "String"
+			},
+			{
+				"name": "TriggeredSendExternalKey",
+				"type": "String"
+			},
+			{
+				"name": "IsUnique",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

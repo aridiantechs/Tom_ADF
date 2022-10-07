@@ -11,7 +11,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": {
-					"value": "@concat('incomeaccess_playeraccounts_SpinRider_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv')\n",
+					"value": "@concat('incomeaccess_playeraccounts_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)\n",
 					"type": "Expression"
 				},
 				"container": "incomeaccess"

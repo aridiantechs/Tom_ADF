@@ -92,7 +92,7 @@
 							"typeProperties": {
 								"variableName": "CurrentFile",
 								"value": {
-									"value": "@concat('incomeaccess_playeraccounts_',pipeline().parameters.Brand,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)\n",
+									"value": "@concat('incomeaccess_playeraccounts_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 									"type": "Expression"
 								}
 							}

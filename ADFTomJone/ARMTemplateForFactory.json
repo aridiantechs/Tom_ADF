@@ -4300,7 +4300,7 @@
 									"typeProperties": {
 										"variableName": "Brand",
 										"value": {
-											"value": "@{item()}",
+											"value": "@{item().Brand}",
 											"type": "Expression"
 										}
 									}

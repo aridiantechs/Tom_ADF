@@ -4312,7 +4312,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@concat('DECLARE @DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' @ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' @RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' @BrandId VARCHAR(100) =','''', pipeline().parameters.Brand_PA,'''',',',\n' @AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' @AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''@DateParam'', @DateStr), ''@AccountName'', @AccountName), ''@AccountKey'', @AccountKey), ''@ContainerParam'', @ContainerParam) + '' '' + @RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Player Account''\nAND Brand = @BrandId\n')",
+												"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' BrandId VARCHAR(100) =','''', item(),'''',',',\n' AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Player Account''\nAND Brand = BrandId\n')",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -4348,7 +4348,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@concat('DECLARE @DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' @ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' @RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' @BrandId VARCHAR(100) =','''', pipeline().parameters.Brand_PA,'''',',',\n' @AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' @AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''@DateParam'', @DateStr), ''@AccountName'', @AccountName), ''@AccountKey'', @AccountKey), ''@ContainerParam'', @ContainerParam) + '' '' + @RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Earnings By Site''\nAND Brand = @BrandId\n')",
+												"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' BrandId VARCHAR(100) =','''', item(),'''',',',\n' AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Earnings By Site''\nAND Brand = BrandId\n')",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -4936,7 +4936,7 @@
 									"typeProperties": {
 										"variableName": "SiteEarningCsvFileName",
 										"value": {
-											"value": "@concat('incomeaccess_earnings_bysite_',pipeline().parameters.Brand,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)\n",
+											"value": "@concat('incomeaccess_earnings_bysite_',item(),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 											"type": "Expression"
 										}
 									}

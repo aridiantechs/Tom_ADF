@@ -17,7 +17,14 @@
 						{
 							"name": "Get Player Account Arg",
 							"type": "Lookup",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Set Brand",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -30,7 +37,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' BrandId VARCHAR(100) =', item(),',',\n' AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Player Account''\nAND Brand = BrandId\n')",
+										"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',pipeline().parameters.CurrentDate,'''',',',\n' ContainerParam VARCHAR(100) =','''', pipeline().parameters.BlobContainerIncomeAccess,'''',',',\n' RayGunKey VARCHAR(100) = ','''',pipeline().parameters.RayGunApiKey,'''',',',\n' BrandId VARCHAR(100) =','''',variables('Brand'),'''',',',\n' AccountName VARCHAR(100) =','''', pipeline().parameters.BlobStorageAccountName,'''',',',\n' AccountKey VARCHAR(1024) =','''', pipeline().parameters.BlobStorageAccountKey,'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Player Account''\nAND Brand = BrandId\n')",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -692,6 +699,19 @@
 									"type": "Expression"
 								}
 							}
+						},
+						{
+							"name": "Set Brand",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Brand",
+								"value": {
+									"value": "@item()",
+									"type": "Expression"
+								}
+							}
 						}
 					]
 				}
@@ -828,6 +848,9 @@
 				"type": "String"
 			},
 			"FailCsvFileName": {
+				"type": "String"
+			},
+			"Brand": {
 				"type": "String"
 			}
 		},

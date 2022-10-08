@@ -5137,9 +5137,6 @@
 					"Brand_PA": {
 						"type": "string"
 					},
-					"Brand": {
-						"type": "string"
-					},
 					"BrandList_PA": {
 						"type": "array"
 					}
@@ -8299,10 +8296,6 @@
 											},
 											"Brand_PA": {
 												"value": "@variables('Brand_PA')",
-												"type": "Expression"
-											},
-											"Brand": {
-												"value": "@variables('Brand')",
 												"type": "Expression"
 											},
 											"BrandList_PA": {

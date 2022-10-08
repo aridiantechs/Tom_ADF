@@ -5,13 +5,19 @@
 			"referenceName": "LS_AzureBlobStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Brand_ACID": {
+				"type": "string",
+				"defaultValue": "SpinRider"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": {
-					"value": "@concat('incomeaccess_acidapi_SpinRider_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv')\n",
+					"value": "@concat('incomeaccess_acidapi_',dataset().Brand_ACID,'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 					"type": "Expression"
 				},
 				"folderPath": "acidapi",

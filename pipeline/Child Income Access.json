@@ -845,9 +845,6 @@
 			"Brand_PA": {
 				"type": "string"
 			},
-			"Brand": {
-				"type": "string"
-			},
 			"BrandList_PA": {
 				"type": "array"
 			}

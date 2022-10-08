@@ -495,10 +495,6 @@
 										"value": "@variables('Brand_PA')",
 										"type": "Expression"
 									},
-									"Brand": {
-										"value": "@variables('Brand')",
-										"type": "Expression"
-									},
 									"BrandList_PA": {
 										"value": "@variables('BrandList_PA')",
 										"type": "Expression"

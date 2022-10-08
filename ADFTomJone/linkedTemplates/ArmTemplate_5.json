@@ -8409,7 +8409,14 @@
 								{
 									"name": "Get Member Group List Arg",
 									"type": "Lookup",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "Set brandlist",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "0.12:00:00",
 										"retry": 0,
@@ -8422,7 +8429,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "@concat('DECLARE DateStr VARCHAR(10) = ','''',variables('CurrentDate'),'''',',',\n' ContainerParam VARCHAR(100) =','''', variables('BlobContainerIncomeAccess'),'''',',',\n' RayGunKey VARCHAR(100) = ','''',variables('RayGunApiKey'),'''',',',\n' BrandId VARCHAR(100) =','''', variables('Brand_PA'),'''',',',\n' AccountName VARCHAR(100) =','''', variables('BlobStorageAccountName'),'''',',',\n' AccountKey VARCHAR(1024) =','''', variables('BlobStorageAccountKey'),'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''DateParam'', DateStr), ''AccountName'', AccountName), ''AccountKey'', AccountKey), ''ContainerParam'', ContainerParam) + '' '' + RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Member Group List''\nAND Brand = BrandId\n')",
+												"value": "@concat('DECLARE @DateStr VARCHAR(10) = ','''',variables('CurrentDate'),'''',',',\n' @ContainerParam VARCHAR(100) =','''', variables('BlobContainerIncomeAccess'),'''',',',\n' @RayGunKey VARCHAR(100) = ','''',variables('RayGunApiKey'),'''',',',\n' @BrandId VARCHAR(100) =','''', variables('Brand_PA'),'''',',',\n' @AccountName VARCHAR(100) =','''', variables('BlobStorageAccountName'),'''',',',\n' @AccountKey VARCHAR(1024) =','''', variables('BlobStorageAccountKey'),'''',\n\n'SELECT ''/C '' + \n\tREPLACE(REPLACE(REPLACE(REPLACE(ArgumentText, ''@DateParam'', @DateStr), ''@AccountName'', @AccountName), ''@AccountKey'', @AccountKey), ''@ContainerParam'', @ContainerParam) + '' '' + @RayGunKey ArgumentText \nFROM config.IncomeAccessFeed \nWHERE FeedType = ''Member Group List''\nAND Brand = @BrandId\n')",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -8450,7 +8457,7 @@
 									"typeProperties": {
 										"variableName": "CurrentCsvMemberGroupList",
 										"value": {
-											"value": "@concat('incomeaccess_membergrouplist_',variables('Brand'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
+											"value": "@concat('incomeaccess_membergrouplist_',variables('Brand_PA'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 											"type": "Expression"
 										}
 									}
@@ -8505,7 +8512,12 @@
 										{
 											"referenceName": "src_ImportMember",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"Brand_PA": {
+													"value": "@variables('Brand_PA')",
+													"type": "Expression"
+												}
+											}
 										}
 									],
 									"outputs": [
@@ -8539,7 +8551,12 @@
 										"dataset": {
 											"referenceName": "src_ImportMember",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"Brand_PA": {
+													"value": "@variables('Brand_PA')",
+													"type": "Expression"
+												}
+											}
 										},
 										"fieldList": [
 											"exists"
@@ -8600,6 +8617,19 @@
 											"referenceName": "log_CSV_Fail",
 											"type": "DatasetReference",
 											"parameters": {}
+										}
+									}
+								},
+								{
+									"name": "Set brandlist",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Brand_PA",
+										"value": {
+											"value": "@{item().Brand}",
+											"type": "Expression"
 										}
 									}
 								}
@@ -8762,7 +8792,14 @@
 								{
 									"name": "Get Member_Group_List_Arg",
 									"type": "Lookup",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "Set Brand_ACID",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "0.12:00:00",
 										"retry": 0,
@@ -8803,7 +8840,7 @@
 									"typeProperties": {
 										"variableName": "CurrentCsvACIDReport",
 										"value": {
-											"value": "@concat('incomeaccess_acidapi_',variables('Brand'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
+											"value": "@concat('incomeaccess_acidapi_',variables('Brand_ACID'),'_',formatDateTime(utcnow(),'yyyyMMdd'),'.csv'\n)",
 											"type": "Expression"
 										}
 									}
@@ -8858,7 +8895,12 @@
 										{
 											"referenceName": "src_PopulateACID",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"Brand_ACID": {
+													"value": "@variables('Brand_ACID')",
+													"type": "Expression"
+												}
+											}
 										}
 									],
 									"outputs": [
@@ -8915,6 +8957,19 @@
 											"referenceName": "logcsvfail",
 											"type": "DatasetReference",
 											"parameters": {}
+										}
+									}
+								},
+								{
+									"name": "Set Brand_ACID",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Brand_ACID",
+										"value": {
+											"value": "@{item().Brand}",
+											"type": "Expression"
 										}
 									}
 								}
@@ -9215,6 +9270,10 @@
 					},
 					"Icon": {
 						"type": "String"
+					},
+					"Brand_ACID": {
+						"type": "String",
+						"defaultValue": "SpinRider"
 					}
 				},
 				"annotations": [],

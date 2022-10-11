@@ -512,7 +512,7 @@
 					{
 						"activity": "Foreach Date in MTD",
 						"dependencyConditions": [
-							"Succeeded"
+							"Completed"
 						]
 					}
 				],
